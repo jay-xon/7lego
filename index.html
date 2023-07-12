@@ -1,114 +1,115 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<meta charset="utf-8">
-<title>加密验证</title>
+    <meta charset="utf-8">
+    <title>编码处理</title>
 </head>
+
 <body>
-<script>
-
-function GetQueryString(name) {
-   var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)","i");
-   var r = window.location.search.substr(1).match(reg);
-   if (r!=null) return unescape(r[2]); return null;
-}
-
-function EncryptionNumber(empNo) {
-    var isExternal = false;
-    if (empNo.indexOf("O") != -1) {
-        empNo = empNo.replace("O", "");
-        isExternal = true;
-    }
-    var now = new Date();
-    var day = now.getFullYear() + ((now.getMonth() + 1) < 10 ? "0" : "") + (now.getMonth() + 1) + (now.getDate() < 10 ? "0" : "") + now.getDate();
-    var rn = FindRn(day);
-    var randN = randomNum(1,9);
-    var num = (randN + rn).toString();
-    var intNum = FindRn(num);
-    var idRond = (Number(empNo) * intNum).toString();
-    if (idRond.length < 9) {
-        idRond = '0' + idRond;
-    }
-    var stringBuilder = new StringBuilder(idRond.length * 2);
-    for (var i = 0; i < idRond.length; i++) {
-        stringBuilder.append((idRond.charCodeAt(i)).toString(16));
-    }
-    stringBuilder = stringBuilder.toString("");
-    var employeeNo = (isExternal ? "O" + stringBuilder + randN : stringBuilder.toString() + randN);
-	var type=GetQueryString("type");
-	if("1"===type){
-		return employeeNo;
-	}
-    return btoa(employeeNo);
-}
-
-function randomNum(minNum, maxNum) {
-    switch (arguments.length) {
-    case 1:
-        return parseInt(Math.random() * minNum + 1, 10);
-        break;
-    case 2:
-        return parseInt(Math.random() * (maxNum - minNum + 1) + minNum, 10);
-        break;
-    default:
-        return 0;
-        break;
-    }
-}
-
-function StringBuilder() {
-    this.stringArray = new Array();
-}
-StringBuilder.prototype.len = function () {
-    return this.stringArray.length;
-};
-
-StringBuilder.prototype.append = function () {
-    this.stringArray.push(iFormatStringArg(arguments));
-};
-
-StringBuilder.prototype.toString = function () {
-    return this.stringArray.join("");
-};
-
-StringBuilder.prototype.join = function (sep) {
-    return this.stringArray.join(sep);
-};
-
-StringBuilder.prototype.clear = function () {
-    delete this.stringArray;
-    this.stringArray = new Array();
-};
-
-function iFormatStringArg(args) {
-    if (args.length <= 0) return "";
-    if (args.length == 1) return args[0];
-
-    var str = args[0];
-    for (var i = 1; i < args.length; i++) {
-        str = str.replace("{" + (i - 1) + "}", args[i]);
-    }
-    return str;
-}
-
-function FindRn(num) {
-    var rN = 0;
-    for (var i = 0; i < num.length; i++) {
-        var item = num.substr(i, 1);
-        rN = rN + Number(item);
-        if (rN > 9) {
-            rN = FindRn(rN.toString());
+    <script>
+        function getQueryString(name) {
+            var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+            var r = window.location.search.substr(1).match(reg);
+            if (r != null) return unescape(r[2]); return null;
         }
-    }
-    return rN;
-}
+        function encrypt(empNo) {
+            var isExternal = false;
+            if (empNo.indexOf("O") != -1) {
+                empNo = empNo.replace("O", "");
+                isExternal = true;
+            }
+            var now = new Date();
+            var day = now.getFullYear() + ((now.getMonth() + 1) < 10 ? "0" : "") + (now.getMonth() + 1) + (now.getDate() < 10 ? "0" : "") + now.getDate();
+            var rn = findRn(day);
+            var randN = randomNum(1, 9);
+            var num = (randN + rn).toString();
+            var intNum = findRn(num);
+            var idRond = (Number(empNo) * intNum).toString();
+            if (idRond.length < 9) {
+                idRond = '0' + idRond;
+            }
+            var stringBuilder = new StringBuilder(idRond.length * 2);
+            for (var i = 0; i < idRond.length; i++) {
+                stringBuilder.append((idRond.charCodeAt(i)).toString(16));
+            }
+            stringBuilder = stringBuilder.toString("");
+            var employeeNo = (isExternal ? "O" + stringBuilder + randN : stringBuilder.toString() + randN);
+            var type = getQueryString("type");
+            if ("1" === type) {
+                return employeeNo;
+            }
+            return btoa(employeeNo);
+        }
 
-var empNo=GetQueryString("empNo");
-if(empNo){
-	document.write(EncryptionNumber(empNo))
-}else {
-	document.write("未传递参数！")
-};
-</script>
+        function randomNum(minNum, maxNum) {
+            switch (arguments.length) {
+                case 1:
+                    return parseInt(Math.random() * minNum + 1, 10);
+                    break;
+                case 2:
+                    return parseInt(Math.random() * (maxNum - minNum + 1) + minNum, 10);
+                    break;
+                default:
+                    return 0;
+                    break;
+            }
+        }
+
+        function StringBuilder() {
+            this.stringArray = new Array();
+        }
+        StringBuilder.prototype.len = function () {
+            return this.stringArray.length;
+        };
+
+        StringBuilder.prototype.append = function () {
+            this.stringArray.push(iFormatStringArg(arguments));
+        };
+
+        StringBuilder.prototype.toString = function () {
+            return this.stringArray.join("");
+        };
+
+        StringBuilder.prototype.join = function (sep) {
+            return this.stringArray.join(sep);
+        };
+
+        StringBuilder.prototype.clear = function () {
+            delete this.stringArray;
+            this.stringArray = new Array();
+        };
+
+        function iFormatStringArg(args) {
+            if (args.length <= 0) return "";
+            if (args.length == 1) return args[0];
+
+            var str = args[0];
+            for (var i = 1; i < args.length; i++) {
+                str = str.replace("{" + (i - 1) + "}", args[i]);
+            }
+            return str;
+        }
+
+        function findRn(num) {
+            var rN = 0;
+            for (var i = 0; i < num.length; i++) {
+                var item = num.substr(i, 1);
+                rN = rN + Number(item);
+                if (rN > 9) {
+                    rN = findRn(rN.toString());
+                }
+            }
+            return rN;
+        }
+
+        var empNo = getQueryString("empNo");
+        if (empNo) {
+            document.write(encrypt(empNo));
+        } else {
+            document.write("");
+        }
+    </script>
 </body>
+
 </html>
